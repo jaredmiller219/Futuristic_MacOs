@@ -1,0 +1,16 @@
+directories:
+  output: release
+  buildResources: build
+appId: com.futuristic.mac
+productName: FuturisticMac
+files:
+  - filter:
+      - dist/**/*
+      - electron.js
+mac:
+  target: dmg
+win:
+  target: nsis
+linux:
+  target: AppImage
+electronVersion: 37.2.3
