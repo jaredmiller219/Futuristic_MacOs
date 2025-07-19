@@ -1,0 +1,118 @@
+.context-menu {
+  position: fixed;
+  min-width: 200px;
+  padding: var(--spacing-sm);
+  border-radius: var(--radius-md);
+  backdrop-filter: blur(40px);
+  -webkit-backdrop-filter: blur(40px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  z-index: 10000;
+  user-select: none;
+}
+
+.context-menu-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  margin-bottom: 2px;
+}
+
+.context-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1);
+  transform: translateX(2px);
+}
+
+.menu-item-content {
+  display: flex;
+  align-items: center;
+  gap: var(--spacing-sm);
+}
+
+.menu-item-label {
+  font-size: 14px;
+  color: var(--text-primary);
+  font-weight: 500;
+}
+
+.menu-item-shortcut {
+  font-size: 12px;
+  color: var(--text-tertiary);
+  font-family: monospace;
+}
+
+.context-menu-separator {
+  height: 1px;
+  background: rgba(255, 255, 255, 0.1);
+  margin: var(--spacing-sm) 0;
+}
+
+/* Icon styling */
+.context-menu-item svg {
+  color: var(--text-secondary);
+  transition: color var(--transition-fast);
+}
+
+.context-menu-item:hover svg {
+  color: var(--accent-blue);
+}
+
+/* Special item styling */
+.context-menu-item[data-danger="true"] {
+  color: var(--accent-red);
+}
+
+.context-menu-item[data-danger="true"]:hover {
+  background: rgba(255, 69, 58, 0.1);
+}
+
+.context-menu-item[data-danger="true"] svg {
+  color: var(--accent-red);
+}
+
+/* Animation for menu items */
+.context-menu-item {
+  opacity: 0;
+  animation: menuItemFadeIn 0.1s ease-out forwards;
+}
+
+.context-menu-item:nth-child(1) { animation-delay: 0.02s; }
+.context-menu-item:nth-child(2) { animation-delay: 0.04s; }
+.context-menu-item:nth-child(3) { animation-delay: 0.06s; }
+.context-menu-item:nth-child(4) { animation-delay: 0.08s; }
+.context-menu-item:nth-child(5) { animation-delay: 0.10s; }
+.context-menu-item:nth-child(6) { animation-delay: 0.12s; }
+.context-menu-item:nth-child(7) { animation-delay: 0.14s; }
+.context-menu-item:nth-child(8) { animation-delay: 0.16s; }
+.context-menu-item:nth-child(9) { animation-delay: 0.18s; }
+.context-menu-item:nth-child(10) { animation-delay: 0.20s; }
+
+@keyframes menuItemFadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .context-menu {
+    min-width: 180px;
+  }
+  
+  .menu-item-label {
+    font-size: 13px;
+  }
+  
+  .menu-item-shortcut {
+    font-size: 11px;
+  }
+}
