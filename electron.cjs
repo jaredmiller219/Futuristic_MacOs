@@ -3,14 +3,34 @@ const path = require('path');
 
 function createWindow () {
   const win = new BrowserWindow({
-    width: 800,
-    height: 600,
+    width: 1200,
+    height: 800,
     webPreferences: {
-      contextIsolation: true
-    }
+      contextIsolation: true,
+      nodeIntegration: false
+    },
+    title: 'Futuristic Mac',
+    vibrancy: 'ultra-dark',
+    show: false
   });
 
-    win.loadFile(path.join(__dirname, 'dist/index.html'));
+  // Show window when ready to prevent white flash
+  win.once('ready-to-show', () => {
+    win.show();
+  });
+
+  // Load the app
+  win.loadFile(path.join(__dirname, 'dist/index.html'));
+
+  // Open DevTools in development
+  if (process.env.NODE_ENV === 'development') {
+    win.webContents.openDevTools();
+  }
+
+  // Handle navigation errors
+  win.webContents.on('did-fail-load', (_, errorCode, errorDescription) => {
+    console.error('Failed to load:', errorCode, errorDescription);
+  });
 }
 
 app.whenReady().then(createWindow);

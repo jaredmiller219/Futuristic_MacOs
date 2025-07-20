@@ -8,12 +8,17 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "vite build && node fix-paths.js",
+    "build:web": "vite build",
     "lint": "eslint .",
     "preview": "vite preview",
-    "electron": "npm run build && electron .",
-    "pack": "electron-builder --dir",
-    "dist": "electron-builder"
+    "electron": "npm run build && npx electron .",
+    "electron:dev": "npm run build && NODE_ENV=development npx electron .",
+    "pack": "npm run build && electron-builder --dir",
+    "dist": "npm run build && electron-builder",
+    "dist:mac": "npm run build && electron-builder --mac",
+    "dist:win": "npm run build && electron-builder --win",
+    "dist:linux": "npm run build && electron-builder --linux"
   },
   "dependencies": {
     "date-fns": "^4.1.0",
