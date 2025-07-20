@@ -10,28 +10,17 @@ lerna-debug.log*
 # Dependencies
 node_modules
 
-# Electron build output
+# Build output (Vite + Electron)
 dist/
+dist-ssr/
 release/
+*.local
 *.exe
 *.dmg
 *.AppImage
 *.asar
 *.pak
 *.node
-
-# Build output
-dist
-dist-ssr
-release
-*.local
-
-# Electron build artifacts
-*.exe
-*.dmg
-*.AppImage
-*.asar
-*.pak
 
 # OS and IDE files
 .DS_Store
