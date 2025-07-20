@@ -37,7 +37,7 @@
         <key>algorithm</key>
         <string>SHA256</string>
         <key>hash</key>
-        <string>3ccbf6473ecb4a1e42188d01d85e171e35a105732e152b8ac9bb4cdb199ef116</string>
+        <string>20af8fae2321c76770e55d432797a657c59fce9cff5137e6c8b9bfde3daaf29d</string>
       </dict>
     </dict>
     <key>LSApplicationCategoryType</key>
@@ -94,7 +94,7 @@
     <key>NSHighResolutionCapable</key>
     <true/>
     <key>NSHumanReadableCopyright</key>
-    <string>Copyright © 2025 FuturisticMac</string>
+    <string>Copyright © 2025 Jared Miller</string>
     <key>NSMainNibFile</key>
     <string>MainMenu</string>
     <key>NSMicrophoneUsageDescription</key>

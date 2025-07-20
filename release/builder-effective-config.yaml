@@ -6,7 +6,7 @@ productName: FuturisticMac
 files:
   - filter:
       - dist/**/*
-      - electron.js
+      - electron.cjs
 mac:
   target: dmg
 win:
