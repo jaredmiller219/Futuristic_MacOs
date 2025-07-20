@@ -10,6 +10,16 @@ lerna-debug.log*
 # Dependencies
 node_modules
 
+# Electron build output
+dist/
+release/
+*.exe
+*.dmg
+*.AppImage
+*.asar
+*.pak
+*.node
+
 # Build output
 dist
 dist-ssr
