@@ -141,12 +141,11 @@ const LoadingScreen = ({ onComplete }) => {
               {loadingSteps[currentStep]}
             </motion.div>
 
-            {/* Scanning Lines */}
-            <div className="scanning-lines">
-              <div className="scan-line"></div>
-              <div className="scan-line"></div>
-              <div className="scan-line"></div>
-            </div>
+            {/* <div className="scanning-lines"> */}
+              {/* <div className="scan-line"></div> */}
+              {/* <div className="scan-line"></div> */}
+              {/* <div className="scan-line"></div> */}
+            {/* </div> */}
           </div>
         </motion.div>
       )}
