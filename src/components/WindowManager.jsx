@@ -21,7 +21,7 @@ const WindowManager = ({ windows, onClose, onMinimize, onFocus, setWindows }) =>
   }
 
   return (
-    <div className="window-manager">
+    <div className="window-manager" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', pointerEvents: 'none', zIndex: 10 }}>
       {windows.map(window => (
         !window.isMinimized && (
           <Draggable
@@ -36,7 +36,8 @@ const WindowManager = ({ windows, onClose, onMinimize, onFocus, setWindows }) =>
               style={{
                 width: window.width,
                 height: window.height,
-                zIndex: window.zIndex
+                zIndex: window.zIndex,
+                pointerEvents: 'auto'
               }}
               initial={{ scale: 0.8, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}

@@ -1,0 +1,111 @@
+.notes-app {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  background: rgba(0,0,0,0.1);
+  box-sizing: border-box;
+  position: relative;
+  min-width: 0;
+  min-height: 0;
+}
+
+.notes-sidebar {
+  width: 220px;
+  padding: var(--spacing-md);
+  border-right: 1px solid var(--glass-border);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.notes-sidebar h3 {
+  font-size: 14px;
+  color: var(--accent-blue);
+  margin-bottom: var(--spacing-sm);
+}
+
+.notes-sidebar ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+
+.notes-sidebar li {
+  padding: var(--spacing-xs) var(--spacing-sm);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  margin-bottom: var(--spacing-xs);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: background var(--transition-fast);
+}
+
+.notes-sidebar li.active {
+  background: rgba(0,122,255,0.1);
+  color: var(--accent-blue);
+}
+
+.delete-btn {
+  background: none;
+  border: none;
+  color: var(--accent-red);
+  cursor: pointer;
+  font-size: 14px;
+  margin-left: 8px;
+}
+
+.add-note-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-xs);
+}
+
+.add-note-form input,
+.add-note-form textarea {
+  width: 100%;
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.05);
+  color: var(--text-primary);
+  font-size: 13px;
+}
+
+.add-note-form button {
+  padding: var(--spacing-xs);
+  border-radius: var(--radius-sm);
+  background: var(--accent-blue);
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.notes-content {
+  flex: 1;
+  padding: var(--spacing-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-md);
+}
+
+.note-title {
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--accent-blue);
+  background: transparent;
+  border: none;
+  margin-bottom: var(--spacing-sm);
+}
+
+.note-body {
+  flex: 1;
+  font-size: 15px;
+  color: var(--text-primary);
+  background: transparent;
+  border: none;
+  resize: none;
+}

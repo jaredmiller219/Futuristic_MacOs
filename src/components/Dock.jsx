@@ -9,10 +9,12 @@ import {
   Mail,
   Calendar,
   Calculator,
-  Globe
+  Globe,
+  FileText
 } from 'lucide-react'
 import FileManager from './apps/FileManager'
 import TerminalApp from './apps/Terminal'
+import Notes from './apps/Notes'
 import './Dock.css'
 
 const Dock = ({ onOpenApp }) => {
@@ -21,6 +23,7 @@ const Dock = ({ onOpenApp }) => {
   const apps = [
     { id: 'finder', name: 'Finder', icon: Folder, color: '#007aff' },
     { id: 'terminal', name: 'Terminal', icon: Terminal, color: '#000000' },
+    { id: 'notes', name: 'Notes', icon: FileText, color: '#ff9500' },
     { id: 'settings', name: 'System Preferences', icon: Settings, color: '#8e8e93' },
     { id: 'camera', name: 'Camera', icon: Camera, color: '#34c759' },
     { id: 'music', name: 'Music', icon: Music, color: '#ff2d92' },
@@ -31,8 +34,7 @@ const Dock = ({ onOpenApp }) => {
   ]
 
   const handleAppClick = (app) => {
-    const content = getAppContent(app.id)
-    onOpenApp(app.id, app.name, content)
+    onOpenApp(app.id, app.name)
   }
 
   const getAppContent = (appId) => {
@@ -41,6 +43,8 @@ const Dock = ({ onOpenApp }) => {
         return <FileManager />
       case 'terminal':
         return <TerminalApp />
+      case 'notes':
+        return <Notes />
       case 'settings':
         return <div className="app-content">
           <h2>System Preferences</h2>

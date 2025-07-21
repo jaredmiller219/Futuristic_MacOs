@@ -6,12 +6,62 @@ import ClockWidget from './components/widgets/ClockWidget'
 import WeatherWidget from './components/widgets/WeatherWidget'
 import NotificationSystem, { useNotifications } from './components/NotificationSystem'
 import LoadingScreen from './components/LoadingScreen'
+import Notes from './components/apps/Notes'
+import Draggable from 'react-draggable';
 import './App.css'
 
-// Simple Window Component
-const SimpleWindow = ({ window, onClose, onFocus }) => {
-  const [isDragging, setIsDragging] = useState(false)
+// Simple Desktop Component (inline)
+const SimpleDesktop = ({ currentTime }) => {
+  return (
+    <div
+      style={{
+        position: 'absolute',
+        top: '32px',
+        left: 0,
+        right: 0,
+        bottom: 0,
+        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
+        overflow: 'hidden',
+        zIndex: 1
+      }}
+    >
+      {/* Animated orbs */}
+      <div style={{
+        position: 'absolute',
+        top: '10%',
+        left: '10%',
+        width: '300px',
+        height: '300px',
+        background: 'radial-gradient(circle, rgba(0, 122, 255, 0.3) 0%, transparent 70%)',
+        borderRadius: '50%',
+        filter: 'blur(80px)',
+        animation: 'float 8s ease-in-out infinite'
+      }} />
 
+      <div style={{
+        position: 'absolute',
+        top: '60%',
+        right: '20%',
+        width: '250px',
+        height: '250px',
+        background: 'radial-gradient(circle, rgba(175, 82, 222, 0.3) 0%, transparent 70%)',
+        borderRadius: '50%',
+        filter: 'blur(80px)',
+        animation: 'float 8s ease-in-out infinite',
+        animationDelay: '-3s'
+      }} />
+
+      {/* Desktop Widgets */}
+      <ClockWidget />
+      <WeatherWidget />
+
+
+    </div>
+  )
+}
+
+const SimpleWindow = ({ window, onClose, onFocus, setWindowPosition }) => {
+  const [isDragging, setIsDragging] = useState(false);
   return (
     <motion.div
       drag
@@ -66,7 +116,6 @@ const SimpleWindow = ({ window, onClose, onFocus }) => {
         </div>
         <div style={{ width: '60px' }} />
       </div>
-
       {/* Window Content */}
       <div style={{
         padding: '20px',
@@ -74,62 +123,20 @@ const SimpleWindow = ({ window, onClose, onFocus }) => {
         height: 'calc(100% - 40px)',
         overflow: 'auto'
       }}>
-        <h2 style={{ marginBottom: '16px' }}>{window.title}</h2>
-        <p>Welcome to {window.title}!</p>
-        <p style={{ marginTop: '16px', opacity: 0.7 }}>
-          This is a demo window. In a full implementation, this would contain the actual application content.
-        </p>
+        {/* Render Notes app if window.appId === 'notes' */}
+        {window.appId === 'notes' ? (
+          <Notes />
+        ) : (
+          <>
+            <h2 style={{ marginBottom: '16px' }}>{window.title}</h2>
+            <p>Welcome to {window.title}!</p>
+            <p style={{ marginTop: '16px', opacity: 0.7 }}>
+              This is a demo window. In a full implementation, this would contain the actual application content.
+            </p>
+          </>
+        )}
       </div>
     </motion.div>
-  )
-}
-
-// Simple Desktop Component (inline)
-const SimpleDesktop = ({ currentTime }) => {
-  return (
-    <div
-      style={{
-        position: 'absolute',
-        top: '32px',
-        left: 0,
-        right: 0,
-        bottom: 0,
-        background: 'linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%)',
-        overflow: 'hidden'
-      }}
-    >
-      {/* Animated orbs */}
-      <div style={{
-        position: 'absolute',
-        top: '10%',
-        left: '10%',
-        width: '300px',
-        height: '300px',
-        background: 'radial-gradient(circle, rgba(0, 122, 255, 0.3) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(80px)',
-        animation: 'float 8s ease-in-out infinite'
-      }} />
-
-      <div style={{
-        position: 'absolute',
-        top: '60%',
-        right: '20%',
-        width: '250px',
-        height: '250px',
-        background: 'radial-gradient(circle, rgba(175, 82, 222, 0.3) 0%, transparent 70%)',
-        borderRadius: '50%',
-        filter: 'blur(80px)',
-        animation: 'float 8s ease-in-out infinite',
-        animationDelay: '-3s'
-      }} />
-
-      {/* Desktop Widgets */}
-      <ClockWidget />
-      <WeatherWidget />
-
-
-    </div>
   )
 }
 
@@ -206,17 +213,31 @@ function App() {
     ))
   }
 
+  // Helper to get window content
+  const getWindowContent = (window) => {
+    if (window.appId === 'notes') return <Notes />;
+    // Add other appId cases here (e.g., terminal, finder)
+    return (
+      <>
+        <h2 style={{ marginBottom: '16px' }}>{window.title || 'Untitled'}</h2>
+        <p>Welcome to {window.title || 'Untitled'}!</p>
+        <p style={{ marginTop: '16px', opacity: 0.7 }}>
+          This is a demo window. In a full implementation, this would contain the actual application content.
+        </p>
+      </>
+    );
+  };
 
+  const windowList = windows.map(w => ({ ...w, content: getWindowContent(w) }));
 
   return (
-    <div className="app">
+    <div className="app" style={{ position: 'fixed', top: 0, left: 0, width: '100vw', height: '100vh', overflow: 'hidden', zIndex: 0 }}>
       {isLoading ? (
         <LoadingScreen onComplete={() => setIsLoading(false)} />
       ) : (
         <>
           <MenuBar currentTime={currentTime} />
           <SimpleDesktop currentTime={currentTime} />
-
           {/* Windows */}
           {windows.map(window => (
             <SimpleWindow
@@ -226,9 +247,7 @@ function App() {
               onFocus={focusWindow}
             />
           ))}
-
           <Dock onOpenApp={openWindow} />
-
           <NotificationSystem
             notifications={notifications}
             onRemove={removeNotification}
