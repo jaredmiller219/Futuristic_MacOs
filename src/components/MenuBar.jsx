@@ -1,31 +1,55 @@
 import { motion } from 'framer-motion'
 import { useState, useEffect } from 'react'
-import { Wifi, Battery, Volume2, Search } from 'lucide-react'
+import { Wifi, Battery, BatteryCharging, Volume2, Volume, VolumeX, Search } from 'lucide-react'
 import { format } from 'date-fns'
 import './MenuBar.css'
 
 const MenuBar = ({ currentTime }) => {
   const [batteryLevel, setBatteryLevel] = useState(null)
+  const [batteryCharging, setBatteryCharging] = useState(false)
+  const [volume, setVolume] = useState(50)
 
   useEffect(() => {
-    // Get battery information if available
+    // Battery API fallback handling
     if ('getBattery' in navigator) {
       navigator.getBattery().then(battery => {
         setBatteryLevel(Math.round(battery.level * 100))
-
-        // Update battery level when it changes
+        setBatteryCharging(battery.charging)
         battery.addEventListener('levelchange', () => {
           setBatteryLevel(Math.round(battery.level * 100))
         })
+        battery.addEventListener('chargingchange', () => {
+          setBatteryCharging(battery.charging)
+        })
       })
     } else {
-      // Fallback for browsers that don't support Battery API
-      setBatteryLevel(85) // Default fallback
+      setBatteryLevel(85)
+      setBatteryCharging(false)
     }
   }, [])
 
-  const formatTime = (date) => {
-    return format(date, 'EEE MMM d  h:mm a')
+  useEffect(() => {
+    // Poll system volume via IPC from our preload script
+    const fetchVolume = async () => {
+      try {
+        const newVolume = await window.electronAPI.getVolume()
+        console.log("Fetched volume:", newVolume)
+        setVolume(newVolume)
+      } catch (error) {
+        console.error("Error getting volume:", error)
+      }
+    }
+    fetchVolume()
+    const interval = setInterval(fetchVolume, 1000)
+    return () => clearInterval(interval)
+  }, [])
+
+  const formatTime = (date) => format(date, 'EEE MMM d  h:mm a')
+
+  const chooseVolumeIcon = () => {
+    if (volume === 0) return <VolumeX size={16} color="#ff4d4d" /> // Mute
+    if (volume > 0 && volume < 50) return <Volume size={16} color="#f0c674" /> // Low volume
+    return <Volume2 size={16} color="#a6e22e" /> // High volume
   }
 
   return (
@@ -49,25 +73,22 @@ const MenuBar = ({ currentTime }) => {
       <div className="menu-center">
         <div className="search-container glass-subtle">
           <Search size={16} />
-          <input 
-            type="text" 
-            placeholder="Spotlight Search" 
-            className="search-input"
-          />
+          <input type="text" placeholder="Spotlight Search" className="search-input" />
         </div>
       </div>
 
       {/* Right side - System status */}
       <div className="menu-right">
-        <div className="status-item">
-          <Battery size={16} />
+        <div className="status-item battery">
+          {batteryCharging ? <BatteryCharging size={18} /> : <Battery size={18} />}
           <span>{batteryLevel !== null ? `${batteryLevel}%` : '--'}</span>
         </div>
         <div className="status-item">
           <Wifi size={16} />
         </div>
         <div className="status-item">
-          <Volume2 size={16} />
+          {chooseVolumeIcon()}
+          <span>{volume}%</span>
         </div>
         <div className="status-item time">
           {formatTime(currentTime)}

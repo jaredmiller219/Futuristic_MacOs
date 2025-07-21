@@ -1,5 +1,6 @@
-const { app, BrowserWindow } = require('electron');
-const path = require('path');
+const { app, BrowserWindow, ipcMain } = require('electron')
+const path = require('path')
+const { exec } = require('child_process')
 
 function createWindow () {
   const win = new BrowserWindow({
@@ -7,34 +8,40 @@ function createWindow () {
     height: 800,
     webPreferences: {
       contextIsolation: true,
-      nodeIntegration: false
+      nodeIntegration: false,
+      preload: path.join(__dirname, 'preload.js') // ensure this is set correctly
     },
     title: 'Futuristic Mac',
     vibrancy: 'ultra-dark',
     show: false
-  });
+  })
 
-  // Show window when ready to prevent white flash
-  win.once('ready-to-show', () => {
-    win.show();
-  });
+  win.once('ready-to-show', () => win.show())
+  win.loadFile(path.join(__dirname, 'dist', 'index.html'))
 
-  // Load the app
-  win.loadFile(path.join(__dirname, 'dist/index.html'));
-
-  // Open DevTools in development
   if (process.env.NODE_ENV === 'development') {
-    win.webContents.openDevTools();
+    win.webContents.openDevTools()
   }
 
-  // Handle navigation errors
   win.webContents.on('did-fail-load', (_, errorCode, errorDescription) => {
-    console.error('Failed to load:', errorCode, errorDescription);
-  });
+    console.error('Failed to load:', errorCode, errorDescription)
+  })
 }
 
-app.whenReady().then(createWindow);
+ipcMain.handle('get-volume', async () => {
+  return new Promise((resolve, reject) => {
+    exec("osascript -e 'output volume of (get volume settings)'", (error, stdout) => {
+      if (error) {
+        console.error("Error fetching volume:", error)
+        reject(error)
+      } else {
+        console.log("Raw volume output:", stdout) // Debug log
+        const vol = Number(stdout.trim())
+        resolve(isNaN(vol) ? 50 : vol)
+      }
+    })
+  })
+})
 
-app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') app.quit();
-});
+app.whenReady().then(createWindow)
+app.on('window-all-closed', () => { if (process.platform !== 'darwin') app.quit() })

@@ -46,6 +46,7 @@
   justify-content: center;
   max-width: 400px;
   margin: 0 var(--spacing-xl);
+  /* margin-left: 200px; */
 }
 
 .search-container {
@@ -71,7 +72,7 @@
   color: var(--text-primary);
   font-size: 13px;
   width: 100%;
-  placeholder-color: var(--text-tertiary);
+  /* placeholder-color: var(--text-tertiary); */
 }
 
 .search-input::placeholder {
@@ -81,7 +82,6 @@
 .menu-right {
   display: flex;
   align-items: center;
-  gap: var(--spacing-md);
 }
 
 .status-item {
@@ -98,6 +98,25 @@
 .status-item:hover {
   background: rgba(255, 255, 255, 0.1);
   color: var(--text-primary);
+}
+
+.status-item.battery {
+  position: relative;
+  /* ...existing code... */
+}
+
+.status-item.battery.charging::after {
+  content: '⚡';
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: rgba(0, 122, 255, 0.9);
+  color: white;
+  border-radius: 50%;
+  padding: 2px;
+  font-size: 10px;
+  line-height: 1;
+  /* Adjust sizing and position as necessary */
 }
 
 .status-item.time {
