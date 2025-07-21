@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import {
   Folder,
   Terminal,
@@ -19,6 +19,7 @@ import './Dock.css'
 
 const Dock = ({ onOpenApp }) => {
   const [hoveredApp, setHoveredApp] = useState(null)
+  const [contextMenu, setContextMenu] = useState({ visible: false, x: 0, y: 0, app: null })
 
   const apps = [
     { id: 'finder', name: 'Finder', icon: Folder, color: '#007aff' },
@@ -36,6 +37,20 @@ const Dock = ({ onOpenApp }) => {
   const handleAppClick = (app) => {
     onOpenApp(app.id, app.name)
   }
+
+  const handleContextMenu = (event, app) => {
+    event.preventDefault();
+    setContextMenu({ visible: true, x: event.clientX, y: event.clientY, app });
+  }
+
+  // Hide context menu on click elsewhere
+  useEffect(() => {
+    const hideMenu = () => setContextMenu({ visible: false, x: 0, y: 0, app: null });
+    if (contextMenu.visible) {
+      window.addEventListener('click', hideMenu);
+      return () => window.removeEventListener('click', hideMenu);
+    }
+  }, [contextMenu.visible]);
 
   const getAppContent = (appId) => {
     switch (appId) {
@@ -93,7 +108,6 @@ const Dock = ({ onOpenApp }) => {
           const Icon = app.icon
           const isHovered = hoveredApp === app.id
           const scale = isHovered ? 1.3 : 1
-          
           return (
             <motion.div
               key={app.id}
@@ -102,7 +116,21 @@ const Dock = ({ onOpenApp }) => {
               whileTap={{ scale: 0.95 }}
               onHoverStart={() => setHoveredApp(app.id)}
               onHoverEnd={() => setHoveredApp(null)}
-              onClick={() => handleAppClick(app)}
+              onClick={(e) => {
+                // Option+Click opens context menu, not app
+                if (e.altKey) {
+                  handleContextMenu(e, app);
+                } else {
+                  handleAppClick(app);
+                }
+              }}
+              onContextMenu={(e) => handleContextMenu(e, app)}
+              onMouseDown={(e) => {
+                // Option+Click (Alt+Click) when hovered should only open context menu
+                if (isHovered && e.altKey && e.button === 0) {
+                  handleContextMenu(e, app);
+                }
+              }}
               style={{
                 zIndex: isHovered ? 10 : 1
               }}
@@ -120,7 +148,6 @@ const Dock = ({ onOpenApp }) => {
                   style={{ filter: 'drop-shadow(0 0 8px rgba(255,255,255,0.3))' }}
                 />
               </div>
-              
               {isHovered && (
                 <motion.div
                   className="app-tooltip glass"
@@ -135,6 +162,28 @@ const Dock = ({ onOpenApp }) => {
           )
         })}
       </div>
+      {/* Context Menu */}
+      {contextMenu.visible && (
+        <div
+          className="dock-context-menu glass"
+          style={{
+            position: 'fixed',
+            top: contextMenu.y,
+            left: contextMenu.x,
+            zIndex: 9999,
+            background: 'rgba(30,30,30,0.95)',
+            color: 'white',
+            borderRadius: '8px',
+            boxShadow: '0 2px 12px rgba(0,0,0,0.2)',
+            padding: '8px 0',
+            minWidth: '140px'
+          }}
+        >
+          <div style={{ padding: '8px 16px', cursor: 'pointer' }} onClick={() => { onOpenApp(contextMenu.app.id, contextMenu.app.name); setContextMenu({ visible: false, x: 0, y: 0, app: null }); }}>Open</div>
+          <div style={{ padding: '8px 16px', cursor: 'pointer' }} onClick={() => { /* Add close logic if needed */ setContextMenu({ visible: false, x: 0, y: 0, app: null }); }}>Close</div>
+          <div style={{ padding: '8px 16px', cursor: 'pointer' }} onClick={() => { setContextMenu({ visible: false, x: 0, y: 0, app: null }); }}>Info</div>
+        </div>
+      )}
     </motion.div>
   )
 }

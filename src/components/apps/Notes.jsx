@@ -1,14 +1,21 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { motion } from 'framer-motion'
 import './Notes.css'
 
+const NOTES_STORAGE_KEY = 'futuristic_mac_notes';
+
 const Notes = () => {
-  const [notes, setNotes] = useState([
-    { id: 1, title: 'Welcome', content: 'This is your first note!' }
-  ])
-  const [selectedId, setSelectedId] = useState(1)
+  const [notes, setNotes] = useState(() => {
+    const saved = localStorage.getItem(NOTES_STORAGE_KEY);
+    return saved ? JSON.parse(saved) : [{ id: 1, title: 'Welcome', content: 'This is your first note!' }];
+  });
+  const [selectedId, setSelectedId] = useState(notes[0]?.id || 1)
   const [newTitle, setNewTitle] = useState('')
   const [newContent, setNewContent] = useState('')
+
+  useEffect(() => {
+    localStorage.setItem(NOTES_STORAGE_KEY, JSON.stringify(notes));
+  }, [notes]);
 
   const addNote = () => {
     if (!newTitle.trim()) return
@@ -49,18 +56,12 @@ const Notes = () => {
           ))}
         </ul>
         <div className="add-note-form">
-          <input
-            type="text"
-            placeholder="Title"
-            value={newTitle}
-            onChange={e => setNewTitle(e.target.value)}
-          />
-          <textarea
-            placeholder="Content"
-            value={newContent}
-            onChange={e => setNewContent(e.target.value)}
-          />
-          <button onClick={addNote}>Add Note</button>
+          <button onClick={() => {
+            // const untitledCount = notes.filter(n => n.title.startsWith('Untitled')).length + 1;
+            const id = Date.now();
+            setNotes([...notes, { id, title: `New Note`, content: '' }]);
+            setSelectedId(id);
+          }}>Create Note</button>
         </div>
       </div>
       <div className="notes-content">
