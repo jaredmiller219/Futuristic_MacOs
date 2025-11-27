@@ -3,7 +3,7 @@ import './SystemPreferences.css'
 
 const NOTIFICATIONS_KEY = 'notificationsEnabled'
 
-export default function SystemPreferences({ onClose, onToggleNotifications }) {
+export default function SystemPreferences({ onClose }) {
   const [notificationsEnabled, setNotificationsEnabled] = useState(true)
 
   useEffect(() => {
@@ -17,16 +17,20 @@ export default function SystemPreferences({ onClose, onToggleNotifications }) {
     const newValue = !notificationsEnabled
     setNotificationsEnabled(newValue)
     localStorage.setItem(NOTIFICATIONS_KEY, newValue)
-    if (onToggleNotifications) {
-      onToggleNotifications(newValue)
+    // Notify parent (App.jsx) immediately
+    if (window.dispatchEvent) {
+      window.dispatchEvent(new CustomEvent('notificationSettingChanged', { detail: newValue }))
     }
   }
 
   return (
-    <div className="window-content" style={{ height: '100%', background: 'rgba(0,0,0,0.2)', color: '#fff', padding: '24px 16px' }}>
-      <h2 style={{ marginBottom: '16px' }}>System Preferences</h2>
-      <div style={{ marginBottom: '24px' }}>
-        <h3>Notifications</h3>
+    <div className="system-preferences-window">
+      <div className="header">
+        <span>System Preferences</span>
+        <button onClick={onClose}>×</button>
+      </div>
+      <div className="content">
+        <h2>Notifications</h2>
         <label className="toggle-label">
           <input
             type="checkbox"
@@ -36,7 +40,6 @@ export default function SystemPreferences({ onClose, onToggleNotifications }) {
           Enable Notifications
         </label>
       </div>
-      <button onClick={onClose} style={{ position: 'absolute', top: 16, right: 16, background: 'none', border: 'none', color: '#fff', fontSize: '1.5em', cursor: 'pointer' }}>×</button>
     </div>
   )
 }
